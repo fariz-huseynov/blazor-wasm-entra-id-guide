@@ -28,3 +28,4 @@ To see exactly what a step changed, run `git diff step-01 step-02`.
 | 04 | Show the current render mode in the app bar | [04-show-render-mode.md](docs/guide/04-show-render-mode.md) |
 | 05 | Add a todo list that works on the server and in the browser | [05-todos.md](docs/guide/05-todos.md) |
 | 06 | Add a versioned API for other programs at `/api/v1/todos` | [06-external-api.md](docs/guide/06-external-api.md) |
+| 07 | Document the external API with OpenAPI and browse it with Scalar | [07-openapi-scalar.md](docs/guide/07-openapi-scalar.md) |

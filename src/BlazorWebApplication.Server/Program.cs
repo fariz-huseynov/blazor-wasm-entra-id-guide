@@ -3,6 +3,7 @@ using BlazorWebApplication.Server.Endpoints;
 using BlazorWebApplication.Server.Todos;
 using BlazorWebApplication.Shared.Todos;
 using MudBlazor.Services;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,21 @@ builder.Services.AddMudServices();
 
 // The todo store. Client pages also get this ITodoService while the server prerenders them.
 builder.Services.AddSingleton<ITodoService, InMemoryTodoService>();
+
+// OpenAPI document "v1" (served at /openapi/v1.json). It only describes the external API under /api/v1.
+builder.Services.AddOpenApi("v1", options =>
+{
+    options.ShouldInclude = description =>
+        description.RelativePath?.StartsWith("api/v1/", StringComparison.OrdinalIgnoreCase) == true;
+
+    options.AddDocumentTransformer((document, context, cancellationToken) =>
+    {
+        document.Info.Title = "BlazorWebApplication API";
+        document.Info.Version = "v1";
+        document.Info.Description = "The external todo API.";
+        return Task.CompletedTask;
+    });
+});
 
 var app = builder.Build();
 
@@ -41,6 +57,13 @@ app.MapStaticAssets();
 
 app.MapUiTodoEndpoints();       // /api/ui/todos: for this app's own pages
 app.MapExternalTodoEndpoints(); // /api/v1/todos: for other programs
+
+// API documentation, only while developing. See docs/guide/07-openapi-scalar.md to show it elsewhere.
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();               // /openapi/v1.json
+    app.MapScalarApiReference(options => options.WithTitle("BlazorWebApplication API")); // /scalar
+}
 
 app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()

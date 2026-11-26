@@ -3,4 +3,7 @@
     <MudNavLink Href="counter" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Counter</MudNavLink>
     <MudNavLink Href="weather" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Cloud">Weather</MudNavLink>
     <MudNavLink Href="todos" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Checklist">Todos</MudNavLink>
+    <MudDivider Class="my-2" />
+    @* Target="_blank" opens a new tab with a normal request, so the server (not the Blazor router) serves /scalar. *@
+    <MudNavLink Href="scalar/" Target="_blank" Icon="@Icons.Material.Filled.Api">API docs (Scalar)</MudNavLink>
 </MudNavMenu>
