@@ -1,8 +1,11 @@
+using BlazorWebApplication.Server.Auth;
 using BlazorWebApplication.Server.Components;
 using BlazorWebApplication.Server.Endpoints;
 using BlazorWebApplication.Server.Todos;
 using BlazorWebApplication.Shared.Auth;
 using BlazorWebApplication.Shared.Todos;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Identity.Web;
 using MudBlazor.Services;
@@ -31,8 +34,15 @@ builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
     {
         // Signed in, but missing a role: show our page instead of the default /Account/AccessDenied.
         cookie.AccessDeniedPath = "/access-denied";
+
+        // API calls can't follow a redirect to a sign-in page. Give them a plain status code instead:
+        // 401 = not signed in, 403 = signed in, but missing a role.
+        cookie.Events.OnRedirectToLogin = context => ApiStatusOrRedirect(context, StatusCodes.Status401Unauthorized);
+        cookie.Events.OnRedirectToAccessDenied = context => ApiStatusOrRedirect(context, StatusCodes.Status403Forbidden);
     });
-builder.Services.AddAuthorization();
+// Named policies for the API endpoints (see Auth/Policies.cs).
+builder.Services.AddAuthorizationBuilder()
+    .AddAppPolicies();
 builder.Services.AddCascadingAuthenticationState();
 
 // MudBlazor services. The server needs them too, because it prerenders the Client pages.
@@ -95,3 +105,18 @@ app.MapRazorComponents<App>()
     .AddAdditionalAssemblies(typeof(BlazorWebApplication.Client._Imports).Assembly);
 
 app.Run();
+
+// Used by the cookie events above: status code for /api requests, the normal redirect for pages.
+static Task ApiStatusOrRedirect(RedirectContext<CookieAuthenticationOptions> context, int statusCode)
+{
+    if (context.Request.Path.StartsWithSegments("/api"))
+    {
+        context.Response.StatusCode = statusCode;
+    }
+    else
+    {
+        context.Response.Redirect(context.RedirectUri);
+    }
+
+    return Task.CompletedTask;
+}

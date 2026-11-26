@@ -31,6 +31,7 @@ To see exactly what a step changed, run `git diff step-01 step-02`.
 | 07 | Document the external API with OpenAPI and browse it with Scalar | [07-openapi-scalar.md](docs/guide/07-openapi-scalar.md) |
 | 08 | Sign in with Microsoft Entra ID and show the user in the app bar | [08-entra-sign-in.md](docs/guide/08-entra-sign-in.md) |
 | 09 | Define app roles and use them to show or hide parts of the UI | [09-app-roles.md](docs/guide/09-app-roles.md) |
+| 10 | Protect the UI API with the sign-in cookie, roles and an antiforgery token | [10-protect-ui-api.md](docs/guide/10-protect-ui-api.md) |
 
 ## Setting up Microsoft Entra ID
 
