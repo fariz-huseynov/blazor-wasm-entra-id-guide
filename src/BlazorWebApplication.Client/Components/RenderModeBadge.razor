@@ -1,0 +1,20 @@
+@*
+    Shows where this component is rendering right now.
+    RendererInfo is a property of ComponentBase, so no @inject is needed.
+      - "Static"      : the server is prerendering the page to plain HTML (not interactive yet)
+      - "WebAssembly" : the component runs in the browser and reacts to clicks
+*@
+<MudChip T="string"
+         Size="Size.Small"
+         Variant="Variant.Filled"
+         Color="@(RendererInfo.IsInteractive ? Color.Success : Color.Warning)"
+         Icon="@(RendererInfo.IsInteractive ? Icons.Material.Filled.Bolt : Icons.Material.Filled.HourglassTop)"
+         title="@Description">
+    @RendererInfo.Name
+</MudChip>
+
+@code {
+    private string Description => RendererInfo.IsInteractive
+        ? $"Interactive: running in {RendererInfo.Name}"
+        : "Not interactive yet: prerendered on the server";
+}

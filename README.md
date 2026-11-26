@@ -25,3 +25,4 @@ To see exactly what a step changed, run `git diff step-01 step-02`.
 | 01 | Create the project from the Blazor Web App template | [01-create-project.md](docs/guide/01-create-project.md) |
 | 02 | Add a shared project for the todo model and service interface | [02-add-shared-project.md](docs/guide/02-add-shared-project.md) |
 | 03 | Replace Bootstrap with MudBlazor components and layout | [03-add-mudblazor.md](docs/guide/03-add-mudblazor.md) |
+| 04 | Show the current render mode in the app bar | [04-show-render-mode.md](docs/guide/04-show-render-mode.md) |
