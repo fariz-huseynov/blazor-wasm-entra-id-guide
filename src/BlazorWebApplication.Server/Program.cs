@@ -1,11 +1,13 @@
 using BlazorWebApplication.Server.Auth;
 using BlazorWebApplication.Server.Components;
 using BlazorWebApplication.Server.Endpoints;
+using BlazorWebApplication.Server.OpenApi;
 using BlazorWebApplication.Server.Todos;
 using BlazorWebApplication.Shared.Auth;
 using BlazorWebApplication.Shared.Todos;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Identity.Web;
 using MudBlazor.Services;
@@ -40,6 +42,21 @@ builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
         cookie.Events.OnRedirectToLogin = context => ApiStatusOrRedirect(context, StatusCodes.Status401Unauthorized);
         cookie.Events.OnRedirectToAccessDenied = context => ApiStatusOrRedirect(context, StatusCodes.Status403Forbidden);
     });
+// The external API (/api/v1) accepts access tokens from Entra ID in the "Authorization: Bearer ..." header.
+// It uses the same "AzureAd" app registration. This second AddAuthentication() call adds the "Bearer" scheme
+// without changing the defaults above, so pages still use the cookie.
+builder.Services.AddAuthentication()
+    .AddMicrosoftIdentityWebApi(
+        jwt =>
+        {
+            builder.Configuration.Bind("AzureAd", jwt);
+            // Accept both audience forms: "<client-id>" (v2 tokens) and "api://<client-id>" (v1 tokens).
+            var clientId = builder.Configuration["AzureAd:ClientId"];
+            jwt.TokenValidationParameters.ValidAudiences = [clientId, $"api://{clientId}"];
+        },
+        identity => builder.Configuration.Bind("AzureAd", identity),
+        JwtBearerDefaults.AuthenticationScheme);
+
 // Named policies for the API endpoints (see Auth/Policies.cs).
 builder.Services.AddAuthorizationBuilder()
     .AddAppPolicies();
@@ -56,6 +73,9 @@ builder.Services.AddOpenApi("v1", options =>
 {
     options.ShouldInclude = description =>
         description.RelativePath?.StartsWith("api/v1/", StringComparison.OrdinalIgnoreCase) == true;
+
+    // Describes the bearer token, so Scalar shows a field to paste it into.
+    options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
 
     options.AddDocumentTransformer((document, context, cancellationToken) =>
     {
@@ -97,7 +117,11 @@ app.MapExternalTodoEndpoints(); // /api/v1/todos: for other programs
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();               // /openapi/v1.json
-    app.MapScalarApiReference(options => options.WithTitle("BlazorWebApplication API")); // /scalar
+    app.MapScalarApiReference(options => options   // /scalar
+        .WithTitle("BlazorWebApplication API")
+        .AddPreferredSecuritySchemes(BearerSecuritySchemeTransformer.SchemeId)
+        .AddHttpAuthentication(BearerSecuritySchemeTransformer.SchemeId, scheme => scheme.WithToken(""))
+        .EnablePersistentAuthentication());        // keeps the pasted token after a page reload
 }
 
 app.MapRazorComponents<App>()

@@ -1,16 +1,23 @@
 # Sample requests for the external API (/api/v1/todos).
 # Start the app first: dotnet run --project src/BlazorWebApplication.Server --launch-profile https
 # Visual Studio, Rider and VS Code (with the REST Client extension) can send these requests.
+#
+# The API needs an Entra ID access token (step 11). Get one and paste it below:
+#   az account get-access-token --scope api://<client-id>/.default --query accessToken -o tsv
+# Reading needs the Reader or Api.Writer role; creating, changing and deleting needs Api.Writer.
 
 @host = https://localhost:7029
+@token = <paste-access-token-here>
 
 ### List all todos
 GET {{host}}/api/v1/todos
+Authorization: Bearer {{token}}
 Accept: application/json
 
 ### Create a todo (the response contains its id)
 # @name createTodo
 POST {{host}}/api/v1/todos
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -19,10 +26,12 @@ Content-Type: application/json
 
 ### Get the new todo (send "Create a todo" first)
 GET {{host}}/api/v1/todos/{{createTodo.response.body.$.id}}
+Authorization: Bearer {{token}}
 Accept: application/json
 
 ### Mark it as done
 PUT {{host}}/api/v1/todos/{{createTodo.response.body.$.id}}
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -32,9 +41,11 @@ Content-Type: application/json
 
 ### Delete it
 DELETE {{host}}/api/v1/todos/{{createTodo.response.body.$.id}}
+Authorization: Bearer {{token}}
 
 ### An empty title returns 400 Bad Request
 POST {{host}}/api/v1/todos
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -43,3 +54,7 @@ Content-Type: application/json
 
 ### An unknown id returns 404 Not Found
 GET {{host}}/api/v1/todos/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{token}}
+
+### Without a token you get 401 Unauthorized
+GET {{host}}/api/v1/todos

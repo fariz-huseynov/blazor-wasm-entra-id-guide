@@ -32,6 +32,7 @@ To see exactly what a step changed, run `git diff step-01 step-02`.
 | 08 | Sign in with Microsoft Entra ID and show the user in the app bar | [08-entra-sign-in.md](docs/guide/08-entra-sign-in.md) |
 | 09 | Define app roles and use them to show or hide parts of the UI | [09-app-roles.md](docs/guide/09-app-roles.md) |
 | 10 | Protect the UI API with the sign-in cookie, roles and an antiforgery token | [10-protect-ui-api.md](docs/guide/10-protect-ui-api.md) |
+| 11 | Protect the external API with Entra ID access tokens and try it in Scalar | [11-protect-external-api.md](docs/guide/11-protect-external-api.md) |
 
 ## Setting up Microsoft Entra ID
 
@@ -41,5 +42,7 @@ Steps 01–07 run without any setup. From step 08 on, you need an Entra ID tenan
 2. Store the tenant ID, client ID and secret with `dotnet user-secrets` ([step 08](docs/guide/08-entra-sign-in.md#configure-the-app)).
 3. Create the app roles `Reader`, `Contributor` and `Api.Writer` ([step 09](docs/guide/09-app-roles.md#create-the-app-roles-in-entra-id)).
 4. Assign yourself a role in **Enterprise applications → Users and groups**, then sign out and in ([step 09](docs/guide/09-app-roles.md#create-the-app-roles-in-entra-id)).
+5. Expose the API: Application ID URI `api://<client-id>`, scope `access_as_user`, and pre-authorize the Azure CLI ([step 11](docs/guide/11-protect-external-api.md#expose-the-api-in-entra-id)).
+6. Assign yourself `Reader` and `Api.Writer` to call `/api/v1` ([step 11](docs/guide/11-protect-external-api.md#expose-the-api-in-entra-id)).
 
 Never commit real IDs or secrets. The repository only contains placeholders such as `<tenant-id>` and `<client-id>`.
