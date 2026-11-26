@@ -3,6 +3,8 @@
 This repository builds a small **Blazor Web App** (.NET 10, Interactive WebAssembly) one step at a time.
 Every step is a single git commit with a short guide page, so you can follow along or jump to any point.
 
+**Read it as a website:** <https://fariz-huseynov.github.io/blazor-wasm-entra-id-guide/>
+
 ![Adding, ticking and deleting todos as a signed-in Contributor](docs/guide/images/todos-contributor.gif)
 
 ## Quick start
