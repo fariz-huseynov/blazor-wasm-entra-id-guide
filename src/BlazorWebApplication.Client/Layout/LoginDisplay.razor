@@ -1,0 +1,41 @@
+@*
+    "Sign in" link, or the user's name and a "Sign out" button.
+    Sign out is a form POST with an antiforgery token (see Endpoints/AuthenticationEndpoints.cs on the server).
+*@
+@implements IDisposable
+@inject NavigationManager Navigation
+
+<AuthorizeView>
+    <Authorized>
+        <MudText Typo="Typo.body2" Class="mx-2">@context.User.Identity?.Name</MudText>
+        <form action="authentication/logout" method="post">
+            <AntiforgeryToken />
+            <input type="hidden" name="ReturnUrl" value="@_currentUrl" />
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Text" Color="Color.Inherit"
+                       StartIcon="@Icons.Material.Filled.Logout">Sign out</MudButton>
+        </form>
+    </Authorized>
+    <NotAuthorized>
+        <MudButton Href="@($"authentication/login?returnUrl={Uri.EscapeDataString(_currentUrl ?? "")}")"
+                   Variant="Variant.Text" Color="Color.Inherit"
+                   StartIcon="@Icons.Material.Filled.Login">Sign in</MudButton>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private string? _currentUrl;
+
+    protected override void OnInitialized()
+    {
+        _currentUrl = Navigation.Uri;
+        Navigation.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        _currentUrl = Navigation.Uri;
+        StateHasChanged();
+    }
+
+    public void Dispose() => Navigation.LocationChanged -= OnLocationChanged;
+}

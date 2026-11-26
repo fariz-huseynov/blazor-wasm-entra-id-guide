@@ -29,3 +29,13 @@ To see exactly what a step changed, run `git diff step-01 step-02`.
 | 05 | Add a todo list that works on the server and in the browser | [05-todos.md](docs/guide/05-todos.md) |
 | 06 | Add a versioned API for other programs at `/api/v1/todos` | [06-external-api.md](docs/guide/06-external-api.md) |
 | 07 | Document the external API with OpenAPI and browse it with Scalar | [07-openapi-scalar.md](docs/guide/07-openapi-scalar.md) |
+| 08 | Sign in with Microsoft Entra ID and show the user in the app bar | [08-entra-sign-in.md](docs/guide/08-entra-sign-in.md) |
+
+## Setting up Microsoft Entra ID
+
+Steps 01–07 run without any setup. From step 08 on, you need an Entra ID tenant where you can create app registrations.
+
+1. Register the app, add the redirect URIs and a client secret ([step 08](docs/guide/08-entra-sign-in.md#register-the-app-in-entra-id)).
+2. Store the tenant ID, client ID and secret with `dotnet user-secrets` ([step 08](docs/guide/08-entra-sign-in.md#configure-the-app)).
+
+Never commit real IDs or secrets. The repository only contains placeholders such as `<tenant-id>` and `<client-id>`.

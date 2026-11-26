@@ -2,6 +2,8 @@ using BlazorWebApplication.Server.Components;
 using BlazorWebApplication.Server.Endpoints;
 using BlazorWebApplication.Server.Todos;
 using BlazorWebApplication.Shared.Todos;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.Identity.Web;
 using MudBlazor.Services;
 using Scalar.AspNetCore;
 
@@ -9,7 +11,21 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
-    .AddInteractiveWebAssemblyComponents();
+    .AddInteractiveWebAssemblyComponents()
+    // Sends the signed-in user to the WebAssembly app, so <AuthorizeView> works in the browser too.
+    .AddAuthenticationStateSerialization();
+
+// Sign-in with Microsoft Entra ID (OpenID Connect). After sign-in, the user is kept in a cookie.
+// The settings come from the "AzureAd" section (appsettings.json + user secrets).
+builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApp(options =>
+    {
+        builder.Configuration.Bind("AzureAd", options);
+        options.ResponseType = "code";     // authorization code flow (+ PKCE); needs the client secret
+        options.MapInboundClaims = false;  // keep the short claim names from the token: name, oid, tid, ...
+    });
+builder.Services.AddAuthorization();
+builder.Services.AddCascadingAuthenticationState();
 
 // MudBlazor services. The server needs them too, because it prerenders the Client pages.
 builder.Services.AddMudServices();
@@ -55,6 +71,7 @@ app.UseAntiforgery();
 
 app.MapStaticAssets();
 
+app.MapAuthenticationEndpoints(); // /authentication/login and /authentication/logout
 app.MapUiTodoEndpoints();       // /api/ui/todos: for this app's own pages
 app.MapExternalTodoEndpoints(); // /api/v1/todos: for other programs
 

@@ -1,0 +1,10 @@
+@*
+    Shown by AuthorizeRouteView when a signed-out user opens a page with [Authorize] in the browser.
+    forceLoad: true leaves the Blazor app, so the server can send the browser to Microsoft Entra ID.
+*@
+@inject NavigationManager Navigation
+
+@code {
+    protected override void OnInitialized() =>
+        Navigation.NavigateTo($"authentication/login?returnUrl={Uri.EscapeDataString(Navigation.Uri)}", forceLoad: true);
+}
