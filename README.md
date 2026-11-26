@@ -8,8 +8,8 @@ Every step is a single git commit with a short guide page, so you can follow alo
 You need the [.NET 10 SDK](https://dotnet.microsoft.com/download).
 
 ```bash
-git clone <this-repo-url>
-cd BlazorWebApplication
+git clone https://github.com/fariz-huseynov/blazor-wasm-entra-id-guide.git
+cd blazor-wasm-entra-id-guide
 dotnet run --project src/BlazorWebApplication.Server --launch-profile https
 ```
 
@@ -53,3 +53,7 @@ Never commit real IDs or secrets. The repository only contains placeholders such
 
 - [Testing locally](docs/guide/testing-locally.md): a checklist for the browser, Scalar and the console app, and who may do what.
 - [Troubleshooting](docs/guide/troubleshooting.md): common `AADSTS` errors, missing roles, 401 vs 403, certificates.
+
+## License
+
+[MIT](LICENSE)
