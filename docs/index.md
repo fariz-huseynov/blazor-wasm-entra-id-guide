@@ -21,6 +21,8 @@ one concern per step. Point at a step to see what it covers.
 
 ## What you end up with
 
+Pick a scenario and press Play to watch the requests travel between the pieces.
+
 <ArchDiagram />
 
 </div>
