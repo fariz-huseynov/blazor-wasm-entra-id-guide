@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/BlazorWebApplication.Client/BlazorWebApplication.Client.csproj" />
+    <Project Path="src/BlazorWebApplication.ConsoleClient/BlazorWebApplication.ConsoleClient.csproj" />
     <Project Path="src/BlazorWebApplication.Server/BlazorWebApplication.Server.csproj" />
     <Project Path="src/BlazorWebApplication.Shared/BlazorWebApplication.Shared.csproj" />
   </Folder>
