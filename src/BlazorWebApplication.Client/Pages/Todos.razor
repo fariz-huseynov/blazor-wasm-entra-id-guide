@@ -1,0 +1,136 @@
+@page "/todos"
+@using BlazorWebApplication.Shared.Todos
+@inject ITodoService TodoService
+@inject ISnackbar Snackbar
+
+<PageTitle>Todos</PageTitle>
+
+<MudText Typo="Typo.h3" HtmlTag="h1" GutterBottom="true">Todos</MudText>
+
+@* While the page is prerendered (RendererInfo.IsInteractive is false), clicks do nothing, so the inputs are disabled. *@
+<MudPaper Class="pa-4 mb-4" Elevation="1">
+    <MudStack Row="true" AlignItems="AlignItems.Center">
+        <MudTextField @bind-Value="_newTitle" Label="What needs doing?" Variant="Variant.Outlined"
+                      Immediate="true" OnKeyDown="OnKeyDownAsync" MaxLength="200" Class="flex-grow-1"
+                      Disabled="@(!RendererInfo.IsInteractive)" />
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add"
+                   Disabled="@(!CanAdd)" OnClick="AddAsync">Add</MudButton>
+    </MudStack>
+</MudPaper>
+
+<MudPaper Elevation="1">
+    @if (Items is null)
+    {
+        <MudProgressLinear Color="Color.Primary" Indeterminate="true" />
+    }
+    else if (Items.Count == 0)
+    {
+        <MudText Class="pa-4" Color="Color.Secondary">Nothing to do.</MudText>
+    }
+    else
+    {
+        <MudList T="TodoItem" Dense="true">
+            @foreach (var todo in Items)
+            {
+                <MudListItem T="TodoItem" @key="todo.Id">
+                    <MudStack Row="true" AlignItems="AlignItems.Center">
+                        <MudCheckBox T="bool" Value="todo.IsDone" ValueChanged="done => ToggleAsync(todo, done)"
+                                     Color="Color.Primary" Disabled="@(!RendererInfo.IsInteractive)"
+                                     aria-label="@($"Mark '{todo.Title}' as done")" />
+                        <MudText Class="flex-grow-1" Style="@(todo.IsDone ? "text-decoration: line-through" : null)">
+                            @todo.Title
+                        </MudText>
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small"
+                                       Disabled="@(!RendererInfo.IsInteractive)"
+                                       aria-label="@($"Delete '{todo.Title}'")" OnClick="() => DeleteAsync(todo)" />
+                    </MudStack>
+                </MudListItem>
+            }
+        </MudList>
+    }
+</MudPaper>
+
+@code {
+    // [PersistentState] (new in .NET 10): the server saves this property into the prerendered HTML,
+    // and the browser restores it when the page starts. So the list is loaded once, not twice.
+    // It must be public with get and set. null means "not restored, load it".
+    [PersistentState]
+    public List<TodoItem>? Items { get; set; }
+
+    private string? _newTitle;
+
+    private bool CanAdd => RendererInfo.IsInteractive && !string.IsNullOrWhiteSpace(_newTitle);
+
+    protected override async Task OnInitializedAsync()
+    {
+        // On the server, TodoService is InMemoryTodoService. In the browser, it is HttpTodoService.
+        Items ??= [.. await TodoService.GetAllAsync()];
+    }
+
+    private async Task AddAsync()
+    {
+        if (!CanAdd || Items is null)
+        {
+            return;
+        }
+
+        await RunAsync(async () =>
+        {
+            var created = await TodoService.CreateAsync(new CreateTodoRequest(_newTitle!.Trim()));
+            Items.Add(created);
+            _newTitle = string.Empty;
+            Snackbar.Add("Todo added", Severity.Success);
+        });
+    }
+
+    private async Task OnKeyDownAsync(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await AddAsync();
+        }
+    }
+
+    private Task ToggleAsync(TodoItem todo, bool isDone) => RunAsync(async () =>
+    {
+        var updated = await TodoService.UpdateAsync(todo.Id, new UpdateTodoRequest(todo.Title, isDone));
+        Replace(todo, updated);
+    });
+
+    private Task DeleteAsync(TodoItem todo) => RunAsync(async () =>
+    {
+        await TodoService.DeleteAsync(todo.Id);
+        Items?.Remove(todo);
+        Snackbar.Add("Todo deleted", Severity.Info);
+    });
+
+    // Puts the server's version of a todo into the list. null means someone else deleted it.
+    private void Replace(TodoItem old, TodoItem? updated)
+    {
+        if (Items is null) return;
+        var index = Items.IndexOf(old);
+        if (index < 0) return;
+
+        if (updated is null)
+        {
+            Items.RemoveAt(index);
+            Snackbar.Add("This todo no longer exists", Severity.Warning);
+        }
+        else
+        {
+            Items[index] = updated;
+        }
+    }
+
+    private async Task RunAsync(Func<Task> action)
+    {
+        try
+        {
+            await action();
+        }
+        catch (HttpRequestException ex)
+        {
+            Snackbar.Add($"Something went wrong: {ex.Message}", Severity.Error);
+        }
+    }
+}
