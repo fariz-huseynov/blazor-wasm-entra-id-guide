@@ -23,3 +23,4 @@ To see exactly what a step changed, run `git diff step-01 step-02`.
 | Step | What you do | Guide |
 |---|---|---|
 | 01 | Create the project from the Blazor Web App template | [01-create-project.md](docs/guide/01-create-project.md) |
+| 02 | Add a shared project for the todo model and service interface | [02-add-shared-project.md](docs/guide/02-add-shared-project.md) |
