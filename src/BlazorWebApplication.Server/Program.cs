@@ -1,11 +1,15 @@
 using BlazorWebApplication.Client.Pages;
 using BlazorWebApplication.Server.Components;
+using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
+
+// MudBlazor services. The server needs them too, because it prerenders the Client pages.
+builder.Services.AddMudServices();
 
 var app = builder.Build();
 

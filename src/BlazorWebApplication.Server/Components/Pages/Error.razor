@@ -1,10 +1,11 @@
-﻿@page "/Error"
+@page "/Error"
 @using System.Diagnostics
 
 <PageTitle>Error</PageTitle>
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
+@* This page is rendered statically on the server (no interactivity), so it uses plain HTML. *@
+<h1 style="color: #b32121">Error.</h1>
+<h2 style="color: #b32121">An error occurred while processing your request.</h2>
 
 @if (ShowRequestId)
 {

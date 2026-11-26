@@ -1,7 +1,11 @@
-﻿@page "/"
+@page "/"
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<MudText Typo="Typo.h3" HtmlTag="h1" GutterBottom="true">Hello, world!</MudText>
 
-Welcome to your new app.
+<MudText Class="mb-4">Welcome to your new app.</MudText>
+
+<MudAlert Severity="Severity.Info">
+    This page is built with MudBlazor components. Use the menu on the left to try the other pages.
+</MudAlert>
