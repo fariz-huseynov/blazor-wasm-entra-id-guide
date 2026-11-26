@@ -39,7 +39,8 @@ app.UseAntiforgery();
 
 app.MapStaticAssets();
 
-app.MapUiTodoEndpoints();
+app.MapUiTodoEndpoints();       // /api/ui/todos: for this app's own pages
+app.MapExternalTodoEndpoints(); // /api/v1/todos: for other programs
 
 app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()

@@ -27,3 +27,4 @@ To see exactly what a step changed, run `git diff step-01 step-02`.
 | 03 | Replace Bootstrap with MudBlazor components and layout | [03-add-mudblazor.md](docs/guide/03-add-mudblazor.md) |
 | 04 | Show the current render mode in the app bar | [04-show-render-mode.md](docs/guide/04-show-render-mode.md) |
 | 05 | Add a todo list that works on the server and in the browser | [05-todos.md](docs/guide/05-todos.md) |
+| 06 | Add a versioned API for other programs at `/api/v1/todos` | [06-external-api.md](docs/guide/06-external-api.md) |
