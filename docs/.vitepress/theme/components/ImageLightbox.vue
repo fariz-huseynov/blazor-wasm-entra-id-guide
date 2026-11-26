@@ -15,6 +15,8 @@ const index = ref(0)
 const actual = ref(false)
 const current = computed(() => images.value[index.value])
 const canZoom = ref(true)
+const fitSize = ref<{ width: string, height: string } | null>(null)
+const MAX_UPSCALE = 2
 
 function collect() {
   images.value = Array.from(document.querySelectorAll<HTMLImageElement>(SELECTOR))
@@ -33,7 +35,7 @@ function open(img: HTMLImageElement) {
   actual.value = false
   dialog.value?.showModal()
   document.documentElement.classList.add('lb-open')
-  updateCanZoom()
+  nextTick(updateCanZoom)
 }
 
 function close() {
@@ -54,10 +56,17 @@ function go(step: number) {
 
 function updateCanZoom() {
   const img = current.value
-  if (!img) return
-  // Only offer "actual size" when the image is bigger than the space it gets when fitted.
+  const box = stage.value
+  if (!img || !box || !img.naturalWidth) return
+  // Fit the image into the free space, and scale small images up (at most 2x) so they are easy to read.
+  const cs = getComputedStyle(box)
+  const availW = box.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)
+  const availH = box.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom)
   const w = img.naturalWidth, h = img.naturalHeight
-  canZoom.value = w > window.innerWidth * 0.94 || h > window.innerHeight * 0.82
+  const scale = Math.min(availW / w, availH / h, MAX_UPSCALE)
+  fitSize.value = { width: `${Math.floor(w * scale)}px`, height: `${Math.floor(h * scale)}px` }
+  // Only offer "actual size" when the fitted image is smaller than the real one.
+  canZoom.value = scale < 1
 }
 
 async function toggleZoom(e?: MouseEvent) {
@@ -144,7 +153,7 @@ onBeforeUnmount(() => {
     </div>
     <div ref="stage" class="lb-stage" @pointerdown="down" @pointermove="move" @pointerup="up" @pointerleave="up">
       <img v-if="current" :key="current.src" :src="current.src" :alt="current.alt"
-           :class="{ zoomable: canZoom }" draggable="false" @click.stop="imageClick" @load="updateCanZoom" />
+           :class="{ zoomable: canZoom }" :style="actual ? undefined : fitSize ?? undefined" draggable="false" @click.stop="imageClick" @load="updateCanZoom" />
     </div>
     <template v-if="images.length > 1">
       <button type="button" class="lb-nav lb-prev" @click="go(-1)" aria-label="Previous image">‹</button>

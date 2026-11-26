@@ -914,11 +914,9 @@ html.lb-open { overflow: hidden; }
 }
 
 .lightbox::backdrop {
-  background-color: #071a32;
-  background-image:
-    linear-gradient(var(--bp-line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--bp-line) 1px, transparent 1px);
-  background-size: 24px 24px;
+  background: rgba(5, 13, 26, 0.88);
+  -webkit-backdrop-filter: blur(18px) saturate(0.8);
+  backdrop-filter: blur(18px) saturate(0.8);
 }
 
 .lightbox[open] {
@@ -929,8 +927,7 @@ html.lb-open { overflow: hidden; }
 .lb-bar {
   position: relative;
   z-index: 1;
-  background: #071a32;
-  border-bottom: 1px solid var(--bp-line);
+  background: linear-gradient(rgba(5, 13, 26, 0.9), rgba(5, 13, 26, 0));
   display: flex;
   align-items: center;
   gap: 10px;
@@ -976,14 +973,15 @@ html.lb-open { overflow: hidden; }
   display: grid;
   place-items: center;
   overflow: hidden;
-  padding: 8px 64px 24px;
+  padding: 4px 72px 28px;
 }
 
 .lb-stage img {
   max-width: 100%;
   max-height: 100%;
-  border-radius: 6px;
-  box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.8);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(234, 242, 255, 0.08), 0 40px 100px -20px rgba(0, 0, 0, 0.75);
   user-select: none;
   animation: lb-in 0.18s ease-out;
 }
