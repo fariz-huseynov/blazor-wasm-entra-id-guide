@@ -1,0 +1,14 @@
+@page "/access-denied"
+@* The server sends signed-in users here when a page needs a role they don't have (cookie AccessDeniedPath). *@
+
+<PageTitle>Access denied</PageTitle>
+
+<MudText Typo="Typo.h3" HtmlTag="h1" GutterBottom="true">Access denied</MudText>
+<MudText Class="mb-4">
+    You are signed in, but you don't have the app role this page needs.
+    Ask an administrator to assign you a role, then sign out and sign in again.
+</MudText>
+<MudStack Row="true" Spacing="2">
+    <MudButton Href="claims" Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Badge">See my claims</MudButton>
+    <MudButton Href="" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Home">Go home</MudButton>
+</MudStack>

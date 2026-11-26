@@ -1,5 +1,7 @@
 @page "/todos"
 @using BlazorWebApplication.Shared.Todos
+@* Readers can see the list. Only contributors get the add, toggle and delete controls (AuthorizeView below). *@
+@attribute [Authorize(Roles = $"{AppRoles.Reader},{AppRoles.Contributor}")]
 @inject ITodoService TodoService
 @inject ISnackbar Snackbar
 
@@ -8,15 +10,24 @@
 <MudText Typo="Typo.h3" HtmlTag="h1" GutterBottom="true">Todos</MudText>
 
 @* While the page is prerendered (RendererInfo.IsInteractive is false), clicks do nothing, so the inputs are disabled. *@
-<MudPaper Class="pa-4 mb-4" Elevation="1">
-    <MudStack Row="true" AlignItems="AlignItems.Center">
-        <MudTextField @bind-Value="_newTitle" Label="What needs doing?" Variant="Variant.Outlined"
-                      Immediate="true" OnKeyDown="OnKeyDownAsync" MaxLength="200" Class="flex-grow-1"
-                      Disabled="@(!RendererInfo.IsInteractive)" />
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add"
-                   Disabled="@(!CanAdd)" OnClick="AddAsync">Add</MudButton>
-    </MudStack>
-</MudPaper>
+<AuthorizeView Roles="@AppRoles.Contributor">
+    <Authorized>
+        <MudPaper Class="pa-4 mb-4" Elevation="1">
+            <MudStack Row="true" AlignItems="AlignItems.Center">
+                <MudTextField @bind-Value="_newTitle" Label="What needs doing?" Variant="Variant.Outlined"
+                              Immediate="true" OnKeyDown="OnKeyDownAsync" MaxLength="200" Class="flex-grow-1"
+                              Disabled="@(!RendererInfo.IsInteractive)" />
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add"
+                           Disabled="@(!CanAdd)" OnClick="AddAsync">Add</MudButton>
+            </MudStack>
+        </MudPaper>
+    </Authorized>
+    <NotAuthorized>
+        <MudAlert Severity="Severity.Info" Class="mb-4">
+            You can read the todos. To change them, you need the <b>@AppRoles.Contributor</b> role.
+        </MudAlert>
+    </NotAuthorized>
+</AuthorizeView>
 
 <MudPaper Elevation="1">
     @if (Items is null)
@@ -34,15 +45,26 @@
             {
                 <MudListItem T="TodoItem" @key="todo.Id">
                     <MudStack Row="true" AlignItems="AlignItems.Center">
-                        <MudCheckBox T="bool" Value="todo.IsDone" ValueChanged="done => ToggleAsync(todo, done)"
-                                     Color="Color.Primary" Disabled="@(!RendererInfo.IsInteractive)"
-                                     aria-label="@($"Mark '{todo.Title}' as done")" />
+                        <AuthorizeView Roles="@AppRoles.Contributor">
+                            <Authorized>
+                                <MudCheckBox T="bool" Value="todo.IsDone" ValueChanged="done => ToggleAsync(todo, done)"
+                                             Color="Color.Primary" Disabled="@(!RendererInfo.IsInteractive)"
+                                             aria-label="@($"Mark '{todo.Title}' as done")" />
+                            </Authorized>
+                            <NotAuthorized>
+                                @* Readers see the state, but can't change it. *@
+                                <MudCheckBox T="bool" Value="todo.IsDone" ReadOnly="true" Color="Color.Primary"
+                                             aria-label="@($"'{todo.Title}' is {(todo.IsDone ? "done" : "not done")}")" />
+                            </NotAuthorized>
+                        </AuthorizeView>
                         <MudText Class="flex-grow-1" Style="@(todo.IsDone ? "text-decoration: line-through" : null)">
                             @todo.Title
                         </MudText>
-                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small"
-                                       Disabled="@(!RendererInfo.IsInteractive)"
-                                       aria-label="@($"Delete '{todo.Title}'")" OnClick="() => DeleteAsync(todo)" />
+                        <AuthorizeView Roles="@AppRoles.Contributor">
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small"
+                                           Disabled="@(!RendererInfo.IsInteractive)"
+                                           aria-label="@($"Delete '{todo.Title}'")" OnClick="() => DeleteAsync(todo)" />
+                        </AuthorizeView>
                     </MudStack>
                 </MudListItem>
             }

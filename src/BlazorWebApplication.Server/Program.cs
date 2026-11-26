@@ -1,6 +1,7 @@
 using BlazorWebApplication.Server.Components;
 using BlazorWebApplication.Server.Endpoints;
 using BlazorWebApplication.Server.Todos;
+using BlazorWebApplication.Shared.Auth;
 using BlazorWebApplication.Shared.Todos;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Identity.Web;
@@ -13,7 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents()
     // Sends the signed-in user to the WebAssembly app, so <AuthorizeView> works in the browser too.
-    .AddAuthenticationStateSerialization();
+    // SerializeAllClaims sends every claim (not only name and roles), for the "My claims" page.
+    .AddAuthenticationStateSerialization(options => options.SerializeAllClaims = true);
 
 // Sign-in with Microsoft Entra ID (OpenID Connect). After sign-in, the user is kept in a cookie.
 // The settings come from the "AzureAd" section (appsettings.json + user secrets).
@@ -22,7 +24,13 @@ builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
     {
         builder.Configuration.Bind("AzureAd", options);
         options.ResponseType = "code";     // authorization code flow (+ PKCE); needs the client secret
-        options.MapInboundClaims = false;  // keep the short claim names from the token: name, oid, tid, ...
+        options.MapInboundClaims = false;  // keep the short claim names from the token: name, oid, tid, roles, ...
+        // App roles arrive in the "roles" claim. This makes User.IsInRole("Reader") and [Authorize(Roles = ...)] use it.
+        options.TokenValidationParameters.RoleClaimType = AppRoles.ClaimType;
+    }, cookie =>
+    {
+        // Signed in, but missing a role: show our page instead of the default /Account/AccessDenied.
+        cookie.AccessDeniedPath = "/access-denied";
     });
 builder.Services.AddAuthorization();
 builder.Services.AddCascadingAuthenticationState();

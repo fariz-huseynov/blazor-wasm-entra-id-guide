@@ -9,7 +9,9 @@
                 }
                 else
                 {
-                    <MudAlert Severity="Severity.Warning">You are not allowed to see this page.</MudAlert>
+                    <MudAlert Severity="Severity.Warning">
+                        You don't have the app role this page needs. <MudLink Href="claims">See my claims</MudLink>.
+                    </MudAlert>
                 }
             </NotAuthorized>
         </AuthorizeRouteView>
