@@ -52,6 +52,8 @@ curl -sk https://localhost:7029/ | grep -o 'mud-chip-content">[A-Za-z]*'
 
 This prints `mud-chip-content">Static`, because `curl` only gets the prerendered HTML.
 
+![The badge changes from Static to WebAssembly while the page loads](images/render-mode-badge.gif)
+
 ## Why it works
 
 `RendererInfo.Name` tells you which renderer is drawing the component right now:

@@ -23,7 +23,7 @@
    | Admin consent description | `Lets the app call the todo API as the signed-in user.` |
    | State | **Enabled** |
 
-   <!-- screenshot: Expose an API with the Application ID URI and the access_as_user scope -->
+   ![Expose an API with the scope and the pre-authorized Azure CLI](images/portal-expose-an-api.png)
 
 3. Still on **Expose an API**, under **Authorized client applications**, click **Add a client application**.
    This lets the Azure CLI ask for a token without a consent prompt:
@@ -133,7 +133,9 @@
    | `Reader` | `200` | `403` |
    | `Api.Writer` | `200` | `201` |
 
-   <!-- screenshot: Scalar with the Bearer Token field filled in and a 200 response -->
+   ![Calling the API from Scalar with a token](images/scalar-try-it.gif)
+
+   ![A 200 response in Scalar](images/scalar-200-response.png)
 
 5. Signed in to the web app, open <https://localhost:7029/api/v1/todos> in the browser. You get `401`:
    the API ignores the sign-in cookie. The **Todos** page still works, because it uses `/api/ui`.

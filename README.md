@@ -3,6 +3,8 @@
 This repository builds a small **Blazor Web App** (.NET 10, Interactive WebAssembly) one step at a time.
 Every step is a single git commit with a short guide page, so you can follow along or jump to any point.
 
+![Adding, ticking and deleting todos as a signed-in Contributor](docs/guide/images/todos-contributor.gif)
+
 ## Quick start
 
 You need the [.NET 10 SDK](https://dotnet.microsoft.com/download).
@@ -39,8 +41,8 @@ To see exactly what a step changed, run `git diff step-01 step-02`.
 
 Steps 01–07 run without any setup. From step 08 on, you need an Entra ID tenant where you can create app registrations.
 
-1. Register the app, add the redirect URIs and a client secret ([step 08](docs/guide/08-entra-sign-in.md#register-the-app-in-entra-id)).
-2. Store the tenant ID, client ID and secret with `dotnet user-secrets` ([step 08](docs/guide/08-entra-sign-in.md#configure-the-app)).
+1. Register the app and add the redirect URIs. No client secret is needed ([step 08](docs/guide/08-entra-sign-in.md#register-the-app-in-entra-id)).
+2. Store the tenant ID and client ID with `dotnet user-secrets` ([step 08](docs/guide/08-entra-sign-in.md#configure-the-app)).
 3. Create the app roles `Reader`, `Contributor` and `Api.Writer` ([step 09](docs/guide/09-app-roles.md#create-the-app-roles-in-entra-id)).
 4. Assign yourself a role in **Enterprise applications → Users and groups**, then sign out and in ([step 09](docs/guide/09-app-roles.md#create-the-app-roles-in-entra-id)).
 5. Expose the API: Application ID URI `api://<client-id>`, scope `access_as_user`, and pre-authorize the Azure CLI ([step 11](docs/guide/11-protect-external-api.md#expose-the-api-in-entra-id)).

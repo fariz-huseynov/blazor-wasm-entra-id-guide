@@ -22,7 +22,7 @@ internal sealed class BearerSecuritySchemeTransformer : IOpenApiDocumentTransfor
             Scheme = "bearer",
             BearerFormat = "JWT",
             In = ParameterLocation.Header,
-            Description = "An Entra ID access token for api://<client-id> (paste it without the 'Bearer ' prefix).",
+            Description = "An Entra ID access token for `api://<client-id>` (paste it without the `Bearer ` prefix).",
         };
 
         var requirement = new OpenApiSecurityRequirement

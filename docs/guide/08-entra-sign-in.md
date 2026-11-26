@@ -21,14 +21,16 @@ Otherwise sign-in fails with AADSTS50011.
 
    Click **Register**.
 
-   <!-- screenshot: "Register an application" form filled in -->
+   ![Register an application](images/portal-register-app.png)
 
-2. On the app's **Overview** page, copy two values. You need them in step 5.
+2. On the app's **Overview** page, copy two values. You need them in step 4.
 
    | Overview field | Used as |
    |---|---|
    | Application (client) ID | `<client-id>` |
    | Directory (tenant) ID | `<tenant-id>` |
+
+   ![The Overview page with the client ID and tenant ID](images/portal-app-overview.png)
 
 3. Open **Authentication** (in the app registration) and set:
 
@@ -36,24 +38,25 @@ Otherwise sign-in fails with AADSTS50011.
    |---|---|
    | Redirect URIs (Web) | `https://localhost:7029/signin-oidc` and `https://localhost:7029/signout-callback-oidc` |
    | Front-channel logout URL | `https://localhost:7029/signout-oidc` |
-   | Implicit grant: Access tokens / ID tokens | both **unticked** |
+   | Implicit grant and hybrid flows | **ID tokens** ticked, **Access tokens** unticked |
 
-   Click **Save**.
+   In the new **Authentication (Preview)** page, the redirect URIs are on the **Redirect URI configuration** tab,
+   and the front-channel logout URL and the **ID tokens** box are on the **Settings** tab. Click **Save**.
 
-   <!-- screenshot: Authentication page with the two redirect URIs and the front-channel logout URL -->
+   ![Redirect URIs on the Authentication page](images/portal-authentication.png)
 
-4. Open **Certificates & secrets → Client secrets → New client secret**. Enter a description, click **Add**,
-   and copy the **Value** right away (it is shown only once). This is `<client-secret>`.
+   ![Front-channel logout URL and ID tokens on the Settings tab](images/portal-authentication-settings.png)
+
+   You don't need a client secret or certificate: this app only signs users in (see [Why it works](#why-it-works)).
 
 ### Configure the app
 
-5. Store the three values with **user secrets**. They live in your user profile, not in the repository,
+4. Store the two values with **user secrets**. They live in your user profile, not in the repository,
    so you can't commit them by accident:
 
    ```bash
    dotnet user-secrets set "AzureAd:TenantId" "<tenant-id>" --project src/BlazorWebApplication.Server
    dotnet user-secrets set "AzureAd:ClientId" "<client-id>" --project src/BlazorWebApplication.Server
-   dotnet user-secrets set "AzureAd:ClientSecret" "<client-secret>" --project src/BlazorWebApplication.Server
    ```
 
    The project already has a `UserSecretsId`. In your own project, run
@@ -61,7 +64,7 @@ Otherwise sign-in fails with AADSTS50011.
 
    Check them with `dotnet user-secrets list --project src/BlazorWebApplication.Server`.
 
-6. The rest of the settings are in the server's [appsettings.json](../../src/BlazorWebApplication.Server/appsettings.json).
+5. The rest of the settings are in the server's [appsettings.json](../../src/BlazorWebApplication.Server/appsettings.json).
    The placeholders are replaced by your user secrets:
 
    ```json
@@ -77,14 +80,14 @@ Otherwise sign-in fails with AADSTS50011.
 
 ### Add sign-in to the server
 
-7. Add the packages:
+6. Add the packages:
 
    ```bash
    dotnet add src/BlazorWebApplication.Server package Microsoft.Identity.Web --version 4.18.0
    dotnet add src/BlazorWebApplication.Client package Microsoft.AspNetCore.Components.WebAssembly.Authentication --version 10.0.15
    ```
 
-8. Turn on sign-in in the server's [Program.cs](../../src/BlazorWebApplication.Server/Program.cs):
+7. Turn on sign-in in the server's [Program.cs](../../src/BlazorWebApplication.Server/Program.cs):
 
    ```csharp
    builder.Services.AddRazorComponents()
@@ -95,7 +98,8 @@ Otherwise sign-in fails with AADSTS50011.
        .AddMicrosoftIdentityWebApp(options =>
        {
            builder.Configuration.Bind("AzureAd", options);
-           options.ResponseType = "code";
+           options.ResponseType = "id_token";   // sign-in only, no client secret needed
+           options.ResponseMode = "form_post";
            options.MapInboundClaims = false;
        });
    builder.Services.AddAuthorization();
@@ -104,7 +108,7 @@ Otherwise sign-in fails with AADSTS50011.
    app.MapAuthenticationEndpoints();
    ```
 
-9. Add the sign-in and sign-out URLs
+8. Add the sign-in and sign-out URLs
    ([AuthenticationEndpoints.cs](../../src/BlazorWebApplication.Server/Endpoints/AuthenticationEndpoints.cs)):
 
    ```csharp
@@ -120,7 +124,7 @@ Otherwise sign-in fails with AADSTS50011.
 
 ### Use it in the WebAssembly app
 
-10. Receive the user in the Client's [Program.cs](../../src/BlazorWebApplication.Client/Program.cs):
+9. Receive the user in the Client's [Program.cs](../../src/BlazorWebApplication.Client/Program.cs):
 
     ```csharp
     builder.Services.AddAuthorizationCore();
@@ -131,7 +135,7 @@ Otherwise sign-in fails with AADSTS50011.
     Also add `@using Microsoft.AspNetCore.Authorization` and `@using Microsoft.AspNetCore.Components.Authorization`
     to [_Imports.razor](../../src/BlazorWebApplication.Client/_Imports.razor).
 
-11. Replace `RouteView` with `AuthorizeRouteView` in [Routes.razor](../../src/BlazorWebApplication.Client/Routes.razor).
+10. Replace `RouteView` with `AuthorizeRouteView` in [Routes.razor](../../src/BlazorWebApplication.Client/Routes.razor).
     Signed-out users are sent to sign-in by
     [RedirectToLogin.razor](../../src/BlazorWebApplication.Client/Components/RedirectToLogin.razor):
 
@@ -147,7 +151,7 @@ Otherwise sign-in fails with AADSTS50011.
 
     No page needs a signed-in user yet. Step 09 adds the first ones.
 
-12. Add [LoginDisplay.razor](../../src/BlazorWebApplication.Client/Layout/LoginDisplay.razor) and put
+11. Add [LoginDisplay.razor](../../src/BlazorWebApplication.Client/Layout/LoginDisplay.razor) and put
     `<LoginDisplay />` in the app bar in [MainLayout.razor](../../src/BlazorWebApplication.Client/Layout/MainLayout.razor):
 
     ```razor
@@ -174,12 +178,15 @@ dotnet run --project src/BlazorWebApplication.Server --launch-profile https
 
 1. Open <https://localhost:7029>. The app bar shows **Sign in**.
 2. Click **Sign in**. You see the Microsoft sign-in page. Sign in with an account from your tenant.
+
+   ![The Microsoft sign-in page](images/entra-sign-in-page.png)
+
    The first time, you may be asked to accept the app's permissions.
 3. You are back in the app. The app bar shows your sign-in name and **Sign out**.
    The render mode badge still changes from **Static** to **WebAssembly**, and your name stays.
 4. Click **Sign out**. You are signed out of the app and of Entra ID, and the app bar shows **Sign in** again.
 
-<!-- screenshot: app bar with the user name and "Sign out" -->
+![The app bar after sign-in](images/app-bar-signed-in.png)
 
 If you skip the Entra ID setup, the app still starts and all pages work.
 Only **Sign in** fails with an error page, because `<tenant-id>` is not a real tenant.
@@ -188,10 +195,13 @@ Only **Sign in** fails with an error page, because `<tenant-id>` is not a real t
 
 **Microsoft Entra ID** (formerly Azure Active Directory) is Microsoft's sign-in service.
 An **app registration** tells Entra ID about your app: its ID, where to send users back after sign-in (the **redirect URI**),
-and how the app proves who it is (the **client secret**).
+and which tokens it may receive.
 
 The server signs the user in with **OpenID Connect**: it sends the browser to Entra ID,
-gets a code back at `/signin-oidc`, and swaps the code for an **ID token** using the client secret.
+and Entra ID posts an **ID token** back to `/signin-oidc` (`response_type=id_token`, `form_post`).
+Because the app only needs to know *who* the user is, and never calls another API as the user,
+there is no code to swap for tokens, so the app needs **no client secret or certificate**.
+If you later want the server to call an API such as Microsoft Graph for the user, switch to the code flow and add a certificate.
 The ID token says who the user is. The server then keeps the user in an encrypted **cookie**.
 `Microsoft.Identity.Web` does all of this for you with `AddMicrosoftIdentityWebApp`.
 

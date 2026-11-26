@@ -18,7 +18,7 @@
    The **Value** is what the app checks. It must match exactly, including case.
    `Api.Writer` is used from step 11 on.
 
-   <!-- screenshot: App roles page with the three roles -->
+   ![The three app roles](images/portal-app-roles.png)
 
 2. Assign a role to yourself. Open **Microsoft Entra ID → Enterprise applications → BlazorWebApplication → Users and groups → Add user/group**:
 
@@ -29,7 +29,12 @@
 
    Click **Assign**. To have two roles, add a second assignment with the other role.
 
-   <!-- screenshot: "Add Assignment" with a user and the Contributor role -->
+   ![Add Assignment](images/portal-add-assignment.png)
+
+   When you are done, **Users and groups** lists one row per role. You may also see a **Default Access** row.
+   Entra ID adds it when you first sign in to the app; you can ignore it.
+
+   ![Users and groups with one row per role](images/portal-users-and-groups.png)
 
 3. **Sign out of the app and sign in again.** The roles are read at sign-in, so an open session doesn't see new roles.
 
@@ -108,7 +113,11 @@ dotnet run --project src/BlazorWebApplication.Server --launch-profile https
    but no add box and no delete buttons.
 5. Remove all your roles, sign out and sign in. Opening **Todos** shows **Access denied**.
 
-<!-- screenshot: My claims page with the roles chips -->
+![The My claims page with your roles](images/app-claims.png)
+
+As a **Contributor**, the **Todos** page shows the add box, the check boxes and the delete buttons:
+
+![Todos as a Contributor](images/app-todos-contributor.png)
 
 Without real `AzureAd` values in your user secrets (step 08), **Todos** and **My claims** show an error page
 with "Unable to obtain configuration" (IDX20803). They need sign-in, and sign-in can't reach `<tenant-id>`,

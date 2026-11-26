@@ -101,6 +101,11 @@ dotnet run --project src/BlazorWebApplication.Server --launch-profile https
 
 Open <https://localhost:7029>. You see a blue app bar and a side menu. Try:
 
+![The app with the MudBlazor layout](images/app-home-signed-out.png)
+
+*The screenshots in this guide show the finished app (step 12), so you may see menu items that you add later.*
+
+
 - **Counter**: the button adds to the number in the chip.
 - **Weather**: click it in the menu. A loading bar shows, then a table.
   (If you reload the page, you may see the table, a short loading bar, then new numbers: the page was prerendered

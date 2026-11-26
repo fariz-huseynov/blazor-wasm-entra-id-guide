@@ -24,11 +24,13 @@ builder.Services.AddRazorComponents()
 
 // Sign-in with Microsoft Entra ID (OpenID Connect). After sign-in, the user is kept in a cookie.
 // The settings come from the "AzureAd" section (appsettings.json + user secrets).
+// No client secret: the app only signs users in, so Entra ID posts the ID token straight back to /signin-oidc.
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApp(options =>
     {
         builder.Configuration.Bind("AzureAd", options);
-        options.ResponseType = "code";     // authorization code flow (+ PKCE); needs the client secret
+        options.ResponseType = "id_token"; // sign-in only: no code to swap, so no client secret or certificate is needed
+        options.ResponseMode = "form_post"; // the ID token arrives in a POST to /signin-oidc, not in the URL
         options.MapInboundClaims = false;  // keep the short claim names from the token: name, oid, tid, roles, ...
         // App roles arrive in the "roles" claim. This makes User.IsInRole("Reader") and [Authorize(Roles = ...)] use it.
         options.TokenValidationParameters.RoleClaimType = AppRoles.ClaimType;

@@ -90,6 +90,8 @@ dotnet run --project src/BlazorWebApplication.Server --launch-profile https
 
 Open <https://localhost:7029/todos>. You see three todos. Add one, tick one and delete one.
 
+![Adding, ticking and deleting a todo](images/todos-contributor.gif)
+
 Open the browser's developer tools on the **Network** tab and reload the page.
 There is **no** request to `api/ui/todos`: the list came with the HTML.
 Now click **Home** and then **Todos** again. This time you see a `GET api/ui/todos` request.
