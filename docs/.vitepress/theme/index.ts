@@ -3,9 +3,7 @@ import DefaultTheme from 'vitepress/theme'
 import type { Theme } from 'vitepress'
 import StepProgress from './components/StepProgress.vue'
 import HomeHero from './components/HomeHero.vue'
-import StepTimeline from './components/StepTimeline.vue'
-import ArchDiagram from './components/ArchDiagram.vue'
-import RolesMatrix from './components/RolesMatrix.vue'
+import StepList from './components/StepList.vue'
 import ImageLightbox from './components/ImageLightbox.vue'
 import './custom.css'
 
@@ -17,8 +15,6 @@ export default {
   }),
   enhanceApp({ app }) {
     app.component('HomeHero', HomeHero)
-    app.component('StepTimeline', StepTimeline)
-    app.component('ArchDiagram', ArchDiagram)
-    app.component('RolesMatrix', RolesMatrix)
+    app.component('StepList', StepList)
   },
 } satisfies Theme

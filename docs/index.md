@@ -6,51 +6,60 @@ sidebar: false
 
 <HomeHero />
 
-<div class="home-section vp-doc">
+<div class="home-section vp-doc" id="how-to-start">
 
-## The route
+## How to start
 
-Part 1 builds a working Blazor app with a todo list and two APIs. Part 2 adds Microsoft Entra ID on top,
-one concern per step. Point at a step to see what it covers.
+<div class="start-grid">
+<div>
 
-<StepTimeline />
+1. **Install the tools.** You need the [.NET 10 SDK](https://dotnet.microsoft.com/download).
+   For steps 11 and 12 you also need the [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli).
+
+2. **Get the code.**
+
+   ```bash
+   git clone https://github.com/fariz-huseynov/blazor-wasm-entra-id-guide.git
+   cd blazor-wasm-entra-id-guide
+   ```
+
+3. **Go to a step.** Every step is a git tag. `step-01` is the starting point.
+
+   ```bash
+   git checkout step-01
+   ```
+
+4. **Run it** and open <https://localhost:7029>.
+
+   ```bash
+   dotnet run --project src/BlazorWebApplication.Server --launch-profile https
+   ```
+
+5. **Read the step's page, then move on** with `git checkout step-02`, and so on.
+   `git diff step-01 step-02` shows exactly what a step changed.
+
+</div>
+<aside class="start-notes">
+
+**Two ways to follow along**
+
+- **Read and run:** check out each tag and read its page. Fastest way to understand the ideas.
+- **Build it yourself:** start in an empty folder and follow the commands on each page. Compare your code with the tag when you get stuck.
+
+**What you need from step 08**
+
+A Microsoft Entra ID tenant where you can create an app registration. A free tenant works.
+Steps 01 to 07 need nothing but .NET.
+
+</aside>
+</div>
 
 </div>
 
 <div class="home-section vp-doc">
 
-## What you end up with
+## The 12 steps
 
-<ArchDiagram />
-
-</div>
-
-<div class="home-section vp-doc">
-
-## Who can do what
-
-Three app roles, defined once in Entra ID and checked in both the web app and the APIs.
-Pick a role to see what it allows.
-
-<RolesMatrix />
-
-</div>
-
-<div class="home-section home-start vp-doc">
-
-## Before you start
-
-You need the [.NET 10 SDK](https://dotnet.microsoft.com/download). Steps 01 to 07 run without any setup.
-From step 08 on, you need a Microsoft Entra ID tenant where you can create app registrations, and the
-[Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) for step 11 and 12.
-
-```bash
-git clone https://github.com/fariz-huseynov/blazor-wasm-entra-id-guide.git
-cd blazor-wasm-entra-id-guide
-git checkout step-01      # the app as it is after step 01
-dotnet run --project src/BlazorWebApplication.Server --launch-profile https
-```
-
-<a class="btn btn-primary" href="./guide/01-create-project">Start with step 01</a>
+<StepList />
 
 </div>
