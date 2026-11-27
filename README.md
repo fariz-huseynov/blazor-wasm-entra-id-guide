@@ -1,6 +1,14 @@
-# Blazor WebAssembly + Microsoft Entra ID — a step-by-step guide
+# Blazor WebAssembly + Microsoft Entra ID — a step-by-step .NET 10 tutorial
 
-This repository builds a small **Blazor Web App** (.NET 10, Interactive WebAssembly) one step at a time.
+[![.NET 10](https://img.shields.io/badge/.NET-10-512BD4)](https://dotnet.microsoft.com/download)
+[![Guide website](https://img.shields.io/badge/guide-website-0f3b6e)](https://fariz-huseynov.github.io/blazor-wasm-entra-id-guide/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
+Learn how to secure a **Blazor WebAssembly** app with **Microsoft Entra ID** (formerly Azure Active Directory / Azure AD).
+This repository builds a small **Blazor Web App** (.NET 10, Interactive WebAssembly) one step at a time, covering
+OpenID Connect sign-in with Microsoft.Identity.Web, **app roles**, a cookie-protected UI API with antiforgery,
+an external **ASP.NET Core API protected with JWT bearer tokens**, OpenAPI with **Scalar**, **MudBlazor**,
+and a console client that calls the API with **DefaultAzureCredential**.
 Every step is a single git commit with a short guide page, so you can follow along or jump to any point.
 
 **Read it as a website:** <https://fariz-huseynov.github.io/blazor-wasm-entra-id-guide/>
