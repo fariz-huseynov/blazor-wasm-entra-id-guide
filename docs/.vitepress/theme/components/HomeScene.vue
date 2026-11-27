@@ -72,6 +72,13 @@ async function send(route, kind, label, back = false) {
   setTimeout(() => { trail.style.opacity = 0; setTimeout(() => trail.remove(), 900); }, 400);
 }
 async function cursorTo(x, y) { const c = $('cursor'); c.style.opacity = 1; c.style.left = x + 'px'; c.style.top = y + 'px'; await sleep(900); }
+// Move the pointer so its tip lands on an element (measured, so it stays right at any size).
+async function cursorOn(target, fx = 0.5, fy = 0.55) {
+  const el = typeof target === 'string' ? root.value.querySelector(target) : target;
+  const st = stage.getBoundingClientRect(), r = el.getBoundingClientRect(), k = st.width / 1000;
+  const x = (r.left - st.left + r.width * fx) / k, y = (r.top - st.top + r.height * fy) / k;
+  await cursorTo(x - 4, y - 2); // the arrow's tip sits 4px right and 2px down inside its box
+}
 async function click() {
   const r = $('ripple'), c = $('cursor');
   r.style.left = (parseFloat(c.style.left) + 4) + 'px'; r.style.top = (parseFloat(c.style.top) + 3) + 'px';
@@ -103,16 +110,16 @@ function reset() {
 async function signIn() {
   chapter('Sign in', 6); reset();
   await say('Alex opens the Todos page. Not signed in yet.'); await sleep(1500);
-  await cursorTo(404, 115); await click();
+  await cursorOn('#sc-pg-out .sbtn'); await click();
   await say('Alex clicks <em>Sign in</em>. The server sends the browser to Microsoft.');
   door('door-ui'); await send('rt-ui', 'plain', 'GET /authentication/login'); await send('rt-ui', 'plain', '302 → Entra ID', true); door(null);
   await say('Alex signs in on <em>Microsoft\'s page</em>. The app never sees the password.');
   $('entra').classList.add('on'); await send('rt-en', 'plain', 'authorize');
   $('url').textContent = 'login.microsoftonline.com'; page('pg-ms'); await sleep(500);
-  await cursorTo(230, 266); await click(); await type($('ms-email'), 'alex@contoso.com');
-  await cursorTo(330, 312); await click(); $('ms-email').hidden = true; $('ms-pass').hidden = false; $('ms-title').textContent = 'Enter password'; $('ms-btn').textContent = 'Sign in'; await sleep(300);
-  await cursorTo(230, 266); await click(); await type($('ms-pass'), '••••••••••', 60);
-  await cursorTo(330, 312); await click();
+  await cursorOn('#sc-ms-email', 0.3); await click(); await type($('ms-email'), 'alex@contoso.com');
+  await cursorOn('#sc-ms-btn'); await click(); $('ms-email').hidden = true; $('ms-pass').hidden = false; $('ms-title').textContent = 'Enter password'; $('ms-btn').textContent = 'Sign in'; await sleep(300);
+  await cursorOn('#sc-ms-pass', 0.3); await click(); await type($('ms-pass'), '••••••••••', 60);
+  await cursorOn('#sc-ms-btn'); await click();
   await say('Entra ID answers with an <em>ID token</em> that lists Alex\'s roles.');
   roles(['r-reader', 'r-contrib']); await sleep(500);
   await send('rt-en', 'token', 'ID token', true); $('entra').classList.remove('on');
@@ -127,8 +134,8 @@ async function signIn() {
 async function addTodo() {
   chapter('Add a todo', 3);
   await say('Alex types a todo and clicks <em>Add</em>.');
-  await cursorTo(170, 176); await click(); await type($('todo-in'), 'Write the guide');
-  await cursorTo(402, 176); await click();
+  await cursorOn('#sc-todo-in', 0.3); await click(); await type($('todo-in'), 'Write the guide');
+  await cursorOn('#sc-pg-in .addbtn'); await click();
   await say('The request goes through the <em>/api/ui</em> door with the cookie. The server checks the role.');
   door('door-ui'); await send('rt-ui', 'cookie', 'POST + cookie');
   await stamps(['cookie ✓', 'antiforgery ✓', 'Contributor ✓']); $('store').classList.add('on'); await sleep(500);
