@@ -191,7 +191,7 @@ onBeforeUnmount(() => stopAll())
         <div class="win browser" id="sc-browser">
           <div class="bbar"><span class="d"></span><span class="d"></span><span class="d"></span><div class="url"><span class="lock"></span><span id="sc-url">localhost:7029/todos</span></div></div>
           <div class="page show" id="sc-pg-out">
-            <div class="appbar">BlazorWebApplication<span class="sp"></span><span class="badge">WebAssembly</span><span class="btn">Sign in</span></div>
+            <div class="appbar">BlazorWebApplication<span class="sp"></span><span class="badge">WebAssembly</span><span class="sbtn">Sign in</span></div>
             <div class="appbody"><h4>Todos</h4><p class="muted">Sign in to see and change your todos.</p></div>
           </div>
           <div class="page mspage" id="sc-pg-ms">
@@ -204,7 +204,7 @@ onBeforeUnmount(() => stopAll())
             </div>
           </div>
           <div class="page" id="sc-pg-in">
-            <div class="appbar">BlazorWebApplication<span class="sp"></span><span class="who">alex@contoso.com</span><span class="btn">Sign out</span></div>
+            <div class="appbar">BlazorWebApplication<span class="sp"></span><span class="who">alex@contoso.com</span><span class="sbtn">Sign out</span></div>
             <div class="appbody">
               <h4>Todos</h4>
               <div class="row"><div class="input" id="sc-todo-in" data-ph="What needs doing?"></div><span class="addbtn">+ Add</span></div>
@@ -238,8 +238,8 @@ onBeforeUnmount(() => stopAll())
         </div>
 
         <svg class="fx" viewBox="0 0 1000 466" aria-hidden="true">
-          <path id="sc-rt-ui" class="route" d="M454 270 C 500 270, 510 268, 560 268"/>
-          <path id="sc-rt-v1" class="route" d="M454 350 C 500 350, 510 346, 560 346"/>
+          <path id="sc-rt-ui" class="route" d="M454 271 C 505 271, 530 271, 576 271"/>
+          <path id="sc-rt-v1" class="route" d="M454 349 C 505 349, 530 349, 576 349"/>
           <path id="sc-rt-en" class="route" d="M330 70 C 330 6, 760 0, 812 110"/>
           <g id="sc-trails"></g>
           <g id="sc-pk" class="pk" opacity="0"></g>
@@ -282,16 +282,16 @@ onBeforeUnmount(() => stopAll())
 .scene .glow {filter: drop-shadow(0 0 6px currentColor);}
 .scene .pk text {font: 600 12px var(--mono);}
 .scene .label {position: absolute; font: 500 12px var(--mono); color: var(--ink-soft);}
-.scene .server {position: absolute; left: 560px; top: 168px; width: 200px; height: 236px; border: 2px solid var(--ink-soft); border-radius: 14px; background: rgba(10, 44, 85, .7);}
+.scene .server {position: absolute; left: 560px; top: 168px; width: 220px; height: 236px; border: 2px solid var(--ink-soft); border-radius: 14px; background: rgba(10, 44, 85, .7);}
 .scene .server .roof {position: absolute; left: 16px; top: 14px; font: 700 17px var(--display); font-stretch: 112%;}
 .scene .server .sub {position: absolute; left: 16px; top: 38px; font: 12px var(--mono); color: var(--ink-soft);}
-.scene .door {position: absolute; left: -2px; width: 92px; height: 58px; border: 2px solid; border-left: none; border-radius: 0 10px 10px 0; padding: 8px 10px; font: 600 12.5px/1.3 var(--mono); transition: background-color .3s, box-shadow .3s;}
+.scene .door {position: absolute; left: 16px; width: 104px; height: 58px; border: 2px solid; border-radius: 10px; padding: 8px 10px; background: rgba(10, 44, 85, .9); font: 600 12.5px/1.3 var(--mono); transition: background-color .3s, box-shadow .3s;}
 .scene .door small {display: block; font: 400 11px var(--body); color: var(--ink-soft); margin-top: 3px;}
 .scene .door.ui {top: 74px; border-color: var(--violet); color: var(--violet);}
 .scene .door.v1 {top: 152px; border-color: var(--blue); color: var(--blue);}
 .scene .door.on.ui {background: rgba(155, 135, 255, .18); box-shadow: 0 0 22px rgba(155, 135, 255, .45);}
 .scene .door.on.v1 {background: rgba(95, 176, 255, .18); box-shadow: 0 0 22px rgba(95, 176, 255, .45);}
-.scene .store {position: absolute; right: 14px; top: 108px; width: 78px; height: 64px; border: 1.5px dashed var(--ink-soft); border-radius: 10px; font: 11px/1.3 var(--mono); color: var(--ink-soft); display: grid; place-items: center; text-align: center; transition: border-color .3s, color .3s;}
+.scene .store {position: absolute; right: 16px; top: 110px; width: 72px; height: 64px; border: 1.5px dashed var(--ink-soft); background: rgba(234, 242, 255, .04); border-radius: 10px; font: 11px/1.3 var(--mono); color: var(--ink-soft); display: grid; place-items: center; text-align: center; transition: border-color .3s, color .3s;}
 .scene .store.on {border-color: var(--green); color: var(--green);}
 .scene .stamps {position: absolute; left: 560px; top: 414px; width: 380px; display: flex; flex-wrap: wrap; gap: 6px;}
 .scene .stamp {font: 600 11.5px var(--mono); padding: 3px 9px; border-radius: 6px; border: 1.5px solid var(--green); color: var(--green); background: rgba(95, 224, 160, .1); opacity: 0; transform: scale(1.4) rotate(-4deg); transition: opacity .2s, transform .25s cubic-bezier(.2, 1.6, .4, 1);}
@@ -320,7 +320,7 @@ onBeforeUnmount(() => stopAll())
 .scene .page.show {opacity: 1;}
 .scene .appbar {height: 40px; background: #594ae2; color: #fff; display: flex; align-items: center; gap: 8px; padding: 0 12px; font: 600 13px var(--body);}
 .scene .appbar .sp {flex: 1;}
-.scene .appbar .btn {border: 1px solid rgba(255,255,255,.65); border-radius: 6px; padding: 2px 8px; font-size: 12px; white-space: nowrap;}
+.scene .appbar .sbtn {border: 1px solid rgba(255,255,255,.65); border-radius: 6px; padding: 2px 8px; font-size: 12px; white-space: nowrap;}
 .scene .appbar .who {font-weight: 500; font-size: 12px; white-space: nowrap;}
 .scene .badge {font: 600 10px var(--body); background: #00c853; color: #fff; padding: 1px 7px; border-radius: 999px;}
 .scene .appbody {padding: 14px 16px;}
